@@ -21,7 +21,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testMatchExactName(): void
     {
         $school = new School('Test School', [], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         $result = $this->matcher->match('Test School');
 
@@ -31,7 +31,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testMatchCaseInsensitive(): void
     {
         $school = new School('Test School', [], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         $result = $this->matcher->match('test school');
 
@@ -41,7 +41,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testMatchExactAlias(): void
     {
         $school = new School('Official', ['Alias1', 'Alias2'], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         $result = $this->matcher->match('Alias2');
 
@@ -51,7 +51,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testMatchFuzzy(): void
     {
         $school = new School('Long Official Name', [], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         // "Long Oficial Name" (1 char missing)
         $result = $this->matcher->match('Long Oficial Name');
@@ -62,7 +62,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testMatchFuzzyAlias(): void
     {
         $school = new School('Data', ['VeryUniqueAlias'], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         // "VeryUniqeAlias" (1 char missing)
         $result = $this->matcher->match('VeryUniqeAlias');
@@ -73,7 +73,7 @@ class SchoolMatchingServiceTest extends TestCase
     public function testNoMatchForGibberish(): void
     {
         $school = new School('School One', [], 'City', 'Type');
-        $this->repository->method('findAll')->willReturn([$school]);
+        $this->repository->method('findPotentialMatches')->willReturn([$school]);
 
         $result = $this->matcher->match('Completely Different String');
 

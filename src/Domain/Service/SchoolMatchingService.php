@@ -15,20 +15,22 @@ class SchoolMatchingService
     {
         $normalizedInput = $this->normalize($userInput);
         $inputLength = strlen($normalizedInput);
-        $schools = $this->schoolRepository->findAll();
+        
+        // 1. Get potential candidates from the database using trigram similarity
+        // Optimized: only look at the top 20 candidates instead of thousands
+        $schools = $this->schoolRepository->findPotentialMatches($userInput, 20);
         
         $bestMatch = null;
         $lowestDistance = 1000;
 
         foreach ($schools as $school) {
             foreach ($school->getSearchTerms() as $term) {
-                // 1. Exact match (O(1) comparison)
+                // 2. Exact match (High priority)
                 if ($term === $normalizedInput) {
                     return $school;
                 }
 
-                // 2. Early skip for fuzzy match if length difference is too big
-                // This saves expensive levenshtein() calls
+                // 3. Early skip for fuzzy match if length difference is too big
                 if (abs(strlen($term) - $inputLength) > 3) {
                     continue;
                 }
@@ -41,7 +43,7 @@ class SchoolMatchingService
             }
         }
 
-        // 3. Threshold check
+        // 4. Threshold check for final match
         $threshold = min(3, (int) ($inputLength * 0.3));
 
         return ($bestMatch && $lowestDistance <= $threshold) ? $bestMatch : null;
