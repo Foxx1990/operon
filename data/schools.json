@@ -1,0 +1,126 @@
+[
+    {
+        "name": "I Liceum Ogólnokształcące im. Adama Mickiewicza",
+        "aliases": [
+            "LO Mickiewicza",
+            "Mickiewicz",
+            "I LO",
+            "Pierwsze LO"
+        ],
+        "city": "Warszawa",
+        "type": "liceum"
+    },
+    {
+        "name": "XIV Liceum Ogólnokształcące im. Stanisława Staszica",
+        "aliases": [
+            "Staszic",
+            "XIV LO",
+            "14 LO",
+            "Staszica"
+        ],
+        "city": "Warszawa",
+        "type": "liceum"
+    },
+    {
+        "name": "Zespół Szkół Elektronicznych i Informatycznych",
+        "aliases": [
+            "ZSEI",
+            "Elektronik",
+            "ZSEiI"
+        ],
+        "city": "Warszawa",
+        "type": "technikum"
+    },
+    {
+        "name": "Liceum Ogólnokształcące nr 5 im. Józefa Wybickiego",
+        "aliases": [
+            "V LO",
+            "Piąte LO",
+            "Wybicki",
+            "LO 5"
+        ],
+        "city": "Kraków",
+        "type": "liceum"
+    },
+    {
+        "name": "II Liceum Ogólnokształcące im. Marii Konopnickiej",
+        "aliases": [
+            "Konopnicka",
+            "Drugie LO",
+            "II LO",
+            "LO Konopnickiej"
+        ],
+        "city": "Gdańsk",
+        "type": "liceum"
+    },
+    {
+        "name": "Technikum Informatyczne nr 1",
+        "aliases": [
+            "TI 1",
+            "Pierwsze Informatyczne",
+            "Technikum IT"
+        ],
+        "city": "Wrocław",
+        "type": "technikum"
+    },
+    {
+        "name": "Liceum Ogólnokształcące im. Mikołaja Kopernika",
+        "aliases": [
+            "Kopernik",
+            "LO Kopernika"
+        ],
+        "city": "Poznań",
+        "type": "liceum"
+    },
+    {
+        "name": "Zespół Szkół Technicznych i Ogólnokształcących",
+        "aliases": [
+            "ZSTiO",
+            "Techniczne i Ogólnokształcące",
+            "ZSTO"
+        ],
+        "city": "Łódź",
+        "type": "technikum"
+    },
+    {
+        "name": "III Liceum Ogólnokształcące im. Juliusza Słowackiego",
+        "aliases": [
+            "Słowacki",
+            "Trzecie LO",
+            "III LO",
+            "LO Słowackiego"
+        ],
+        "city": "Kraków",
+        "type": "liceum"
+    },
+    {
+        "name": "Liceum Ogólnokształcące im. Henryka Sienkiewicza",
+        "aliases": [
+            "Sienkiewicz",
+            "LO Sienkiewicza",
+            "Sienkiewicz LO"
+        ],
+        "city": "Katowice",
+        "type": "liceum"
+    },
+    {
+        "name": "Technikum Mechatroniczne",
+        "aliases": [
+            "Mechatronika",
+            "TM",
+            "Tech Mechatroniczne"
+        ],
+        "city": "Gdynia",
+        "type": "technikum"
+    },
+    {
+        "name": "Liceum Ogólnokształcące im. Stefana Żeromskiego",
+        "aliases": [
+            "Żeromski",
+            "LO Żeromskiego",
+            "Zeromski"
+        ],
+        "city": "Szczecin",
+        "type": "liceum"
+    }
+]
