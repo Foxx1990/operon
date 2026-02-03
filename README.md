@@ -1,15 +1,16 @@
 # Moduł Symfony: Dopasowywanie Szkół
 
-Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół wprowadzonych przez użytkownika do zdefiniowanej listy, obsługujący literówki, aliasy i różne warianty zapisu.
+Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół wprowadzonych przez użytkownika do bazy danych, obsługujący literówki, aliasy i różne warianty zapisu.
 
 ## Założenia
-- **Źródło Danych**: PostgreSQL (dane początkowe zaimportowane z `schools.json`).
+- **Baza Danych**: PostgreSQL (wszystkie szkoły są przechowywane i indeksowane w bazie).
 - **Logika Dopasowania**:
     1. Dopasowanie dokładne (Oficjalna nazwa lub Alias).
     2. Dopasowanie dokładne bez względu na wielkość liter (Case-insensitive).
     3. Odległość Levenshteina (Fuzzy match) z dynamicznym progiem (30% długości lub max 3 znaki).
     
-- **Środowisko**: Docker z PHP 8.4, PostgreSQL 16 oraz Nginx.
+- **Środowisko**: Docker (PHP 8.4, PostgreSQL 16, Nginx).
+- **Standard**: API Platform integration dla pełnej dokumentacji i standardu REST.
 
 ## Jak uruchomić
 
@@ -18,38 +19,39 @@ Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół 
    docker compose up -d --build
    ```
 
-2. **Zainstaluj zależności**:
-   ```bash
-   docker compose exec php composer install
-   ```
-
-3. **Przygotuj bazę danych i importuj dane**:
+2. **Przygotuj bazę danych i importuj dane**:
    ```bash
    docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
    docker compose exec php bin/console app:import-schools
    ```
 
-4. **Dostęp do API**:
-   API jest dostępne pod adresem `http://localhost:8080/api`.
+3. **Uruchom testy**:
+   ```bash
+   docker compose exec php bin/phpunit
+   ```
 
 ## Użycie API
 
-### 1. Dopasowywanie szkoły (Zoptymalizowane)
-**Endpoint**: `POST /api/match-school`
+### 1. Dokumentacja interaktywna (Swagger UI)
+Pełna lista endpointów i możliwość testowania "na żywo":
+**URL**: [http://localhost:8080/api](http://localhost:8080/api)
+
+### 2. Dopasowywanie szkoły (Zoptymalizowane)
+To jest główny punkt wejścia dla logiki rozmytej.
+**Endpoint**: `POST /api/schools/match`
 **Headers**: `Content-Type: application/json`
 
-Ten endpoint wykorzystuje dedykowaną logikę rozmytą (Levenshtein) i jest zoptymalizowany pod kątem szybkości.
-
 ```bash
-curl -X POST http://localhost:8080/api/match-school \
+curl -X POST http://localhost:8080/api/schools/match \
      -H "Content-Type: application/json" \
      -d '{"schoolName": "V LO"}'
 ```
 
-### 2. Przeglądanie danych (API Platform)
-Projekt integruje **API Platform**, co daje dostęp do standardowych endpointów REST oraz dokumentacji.
+*(Dostępny jest również alias pod adresem `POST /api/match-school`)*
 
-- **Swagger UI**: [http://localhost:8080/api](http://localhost:8080/api)
+### 3. Przeglądanie danych (API Platform)
+Standardowe endpointy REST do zarządzania listą szkół.
+
 - **Lista szkół**: `GET /api/schools`
 - **Szczegóły szkoły**: `GET /api/schools/{id}`
 
@@ -72,38 +74,19 @@ curl -H "Accept: application/ld+json" http://localhost:8080/api/schools
 }
 ```
 
-### Przykładowa odpowiedź (Brak dopasowania)
-
-```json
-{
-  "matched": false,
-  "message": "No matching school found."
-}
-```
-
-## Podejście
-- **Czysta Architektura (Clean Architecture)**: oddzielenie Domeny (Encje, Serwisy, Interfejsy Repozytoriów) od Infrastruktury (Implementacja Repozytorium, Kontroler).
-- **Wstrzykiwanie Zależności (DI)**: Wykorzystanie autowiringu Symfony oraz atrybutu `#[AsAlias]` do powiązania interfejsu repozytorium.
-- **DTO**: Użycie `SchoolMatchRequest` z `#[MapRequestPayload]` dla bezpiecznej obsługi typów i walidacji danych wejściowych.
-- **Testy**: Dodano testy jednostkowe (PHPUnit) pokrywające logikę dopasowania dokładnego, aliasów i fuzzy search oraz testy integracyjne API na rzeczywistych danych.
+## Architektura
+- **Clean Architecture / DDD**: Logika biznesowa jest odizolowana w `src/Domain`, niezależnie od frameworka i bazy danych.
+- **Wzorzec Repozytorium**: `SchoolRepositoryInterface` pozwala na łatwą zmianę źródła danych (np. migracja z pliku JSON na SQL została wykonana bez zmiany logiki domenowej).
+- **Optymalizacja wydajności (Level 1)**:
+    - Normalizacja danych przy imporcie (pole `search_terms` w JSONB).
+    - Early exit dla dopasowań dokładnych.
+    - Filtrowanie długości przed kosztownymi operacjami `levenshtein()`.
 
 ## Dalszy rozwój i skalowalność
 
-Jeśli liczba szkół znacznie wzrośnie (np. do tysięcy lub milionów), obecne rozwiązanie oparte na pamięci operacyjnej RAM (in-memory) będzie wymagało ewolucji. Poniżej przedstawiono rekomendowaną ścieżkę rozwoju:
+Obecne rozwiązanie oparte na PostgreSQL jest bardzo wydajne dla tysięcy rekordów. W przypadku skali globalnej:
 
-### 1. Baza Danych z Wyszukiwaniem Rozmytym (PostgreSQL)
-Zamiast iterować przez całą listę w PHP (co obciąża procesor i pamięć), należy przenieść ciężar dopasowania na bazę danych.
-- **Technologia**: PostgreSQL z rozszerzeniem `pg_trgm` (trigramy).
-- **Implementacja**: Zapytania SQL wykorzystujące funkcje podobieństwa tekstu, np. `WHERE similarity(name, :input) > 0.4`.
-- **Korzyść**: Natywna, bardzo wydajna obsługa tysięcy rekordów bez potrzeby zewnętrznych serwisów.
+1. **Silnik Full-Text Search**: Integracja z Elasticsearch lub Meilisearch dla jeszcze lepszej tolerancji błędów i rankingu (np. promowanie oficjalnych nazw nad aliasami).
+2. **CQRS**: Rozdzielenie modelu zapisu od szybkich modeli odczytu zoptymalizowanych pod wyszukiwanie.
+3. **Caching**: Wykorzystanie Redis do przechowywania wyników najpopularniejszych zapytań użytkowników.
 
-### 2. Dedykowany Silnik Wyszukiwania (Elasticsearch / Meilisearch)
-Dla kluczowych wymagań biznesowych ("Core Domain") lub bardzo dużych zbiorów danych.
-- **Technologia**: Meilisearch (łatwiejszy w konfiguracji) lub Elasticsearch.
-- **Korzyść**: Najlepsza na rynku tolerancja błędów, obsługa synonimów oraz zaawansowane algorytmy rankingu wyników (np. promowanie oficjalnych nazw wyżej niż aliasów).
-
-### 3. Ewolucja Architektury
-- **CQRS (Command Query Responsibility Segregation)**: Rozdzielenie modelu zapisu (admin dodaje szkoły do bazy SQL) od modelu odczytu (zoptymalizowany indeks w Redis/Elasticsearch służący tylko do wyszukiwania).
-- **Cache**: Najczęstsze zapytania mogą być cache'owane w Redis, aby odciążyć silnik wyszukiwania.
-
-Dzięki zastosowaniu **Wzorca Repozytorium (Repository Pattern)** w tym projekcie (`SchoolRepositoryInterface`), przejście na PostgreSQL lub Elasticsearch wymagałoby jedynie stworzenia nowej klasy implementującej interfejs repozytorium, bez konieczności zmian w Kontrolerze czy logice Domenowej.
