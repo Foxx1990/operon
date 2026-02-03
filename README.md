@@ -5,9 +5,9 @@ Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół 
 ## Założenia
 - **Baza Danych**: PostgreSQL (wszystkie szkoły są przechowywane i indeksowane w bazie).
 - **Logika Dopasowania**:
-    1. Dopasowanie dokładne (Oficjalna nazwa lub Alias).
-    2. Dopasowanie dokładne bez względu na wielkość liter (Case-insensitive).
-    3. Odległość Levenshteina (Fuzzy match) z dynamicznym progiem (30% długości lub max 3 znaki).
+    1. **Dopasowanie dokładne** (Oficjalna nazwa lub Alias).
+    2. **Dopasowanie dokładne bez względu na wielkość liter** (Case-insensitive).
+    3. **Odległość Levenshteina** (Fuzzy match) z dynamicznym progiem (30% długości lub max 3 znaki).
     
 - **Środowisko**: Docker (PHP 8.4, PostgreSQL 16, Nginx).
 - **Standard**: API Platform integration dla pełnej dokumentacji i standardu REST.
