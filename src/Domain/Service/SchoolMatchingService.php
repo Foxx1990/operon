@@ -51,6 +51,6 @@ class SchoolMatchingService
 
     private function normalize(string $input): string
     {
-        return strtolower(trim($input));
+        return strtolower(str_replace(' ', '', $input));
     }
 }

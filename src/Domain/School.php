@@ -49,7 +49,7 @@ class School
         array $searchTerms = []
     ) {
         $this->searchTerms = !empty($searchTerms) ? $searchTerms : array_map(
-            fn($term) => strtolower(trim($term)),
+            fn($term) => strtolower(str_replace(' ', '', $term)),
             array_merge([$this->name], $this->aliases)
         );
     }
