@@ -14,12 +14,17 @@ Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół 
 
 ## Jak uruchomić
 
-1. **Uruchom aplikację**:
+1. **Uruchom kontenery**:
    ```bash
    docker compose up -d --build
    ```
 
-2. **Przygotuj bazę danych i importuj dane**:
+2. **Zainstaluj zależności PHP**:
+   ```bash
+   docker compose exec php composer install
+   ```
+
+3. **Przygotuj bazę danych i importuj dane**:
    ```bash
    docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
    docker compose exec php bin/console app:import-schools
