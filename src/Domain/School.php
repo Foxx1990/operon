@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Post(
             uriTemplate: '/schools/match',
             input: SchoolMatchRequest::class,
-            controller: \App\Controller\Api\SchoolMatchController::class,
+            controller: \App\Controller\SchoolMatchController::class,
             description: 'Search for a school by name or alias using the optimized matching engine.'
         )
     ]
