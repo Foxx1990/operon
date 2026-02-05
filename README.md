@@ -1,6 +1,6 @@
 # Moduł Symfony: Dopasowywanie Szkół
 
-Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół wprowadzonych przez użytkownika do bazy danych, obsługujący literówki, aliasy i różne warianty zapisu.
+Projekt to moduł oparty na Symfony 7, służący do dopasowywania nazw szkół wprowadzonych przez użytkownika obsługujący literówki, aliasy i różne warianty zapisu.
 
 ## Założenia
 - **Baza Danych**: PostgreSQL (wszystkie szkoły są przechowywane i indeksowane w bazie).
